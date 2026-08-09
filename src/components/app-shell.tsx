@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
@@ -31,10 +32,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
 
   async function signOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      await queryClient.cancelQueries();
+      queryClient.clear();
+      navigate({ to: "/auth", replace: true });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not sign out. Please try again.");
+    }
   }
 
   return (

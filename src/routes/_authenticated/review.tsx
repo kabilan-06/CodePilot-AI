@@ -207,6 +207,7 @@ function ReviewPage() {
             onChange={(e) => setCode(e.target.value)}
             placeholder="// paste your code here"
             className="min-h-72 font-mono text-xs"
+            maxLength={40000}
           />
           <p className="text-right font-mono text-xs text-muted-foreground">
             {code.length.toLocaleString()} / 40,000
@@ -216,7 +217,7 @@ function ReviewPage() {
         <div className="mt-2 flex flex-wrap gap-3">
           <Button
             onClick={() => mutation.mutate()}
-            disabled={mutation.isPending || code.trim().length < 10}
+            disabled={mutation.isPending || code.trim().length < 10 || code.length > 40000}
           >
             {mutation.isPending ? (
               <Loader2 className="size-4 animate-spin" />

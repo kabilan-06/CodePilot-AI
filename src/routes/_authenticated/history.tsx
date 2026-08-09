@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated/history")({
 
 function HistoryPage() {
   const queryClient = useQueryClient();
-  const { data: reviews = [], isLoading } = useQuery(reviewsQuery);
+  const { data: reviews = [], isLoading, isError, error } = useQuery(reviewsQuery);
   const [search, setSearch] = useState("");
   const [language, setLanguage] = useState("all");
   const [grade, setGrade] = useState("all");
@@ -106,7 +106,12 @@ function HistoryPage() {
 
       <div className="space-y-3">
         {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
-        {!isLoading && filtered.length === 0 && (
+        {isError && (
+          <Card className="glass-panel p-6 text-sm text-destructive">
+            {error instanceof Error ? error.message : "Could not load review history."}
+          </Card>
+        )}
+        {!isLoading && !isError && filtered.length === 0 && (
           <Card className="glass-panel p-10 text-center">
             <p className="text-sm text-muted-foreground">No reviews match these filters.</p>
             <Button asChild variant="outline" className="mt-4">

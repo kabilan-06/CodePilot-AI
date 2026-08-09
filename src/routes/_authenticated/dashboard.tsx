@@ -28,7 +28,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function DashboardPage() {
-  const { data: reviews = [], isLoading } = useQuery(reviewsQuery);
+  const { data: reviews = [], isLoading, isError, error } = useQuery(reviewsQuery);
 
   const total = reviews.length;
   const avgScore = total
@@ -72,7 +72,12 @@ function DashboardPage() {
           <h2 className="text-sm font-semibold text-muted-foreground">Recent reviews</h2>
           <div className="mt-4 space-y-3">
             {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
-            {!isLoading && total === 0 && (
+            {isError && (
+              <p className="text-sm text-destructive">
+                {error instanceof Error ? error.message : "Could not load reviews."}
+              </p>
+            )}
+            {!isLoading && !isError && total === 0 && (
               <div className="rounded-lg border border-dashed border-border p-8 text-center">
                 <p className="text-sm text-muted-foreground">No reviews yet.</p>
                 <Button asChild variant="outline" className="mt-4">
