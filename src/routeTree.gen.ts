@@ -21,6 +21,8 @@ import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AuthenticatedHistoryReviewIdRouteImport } from './routes/_authenticated/history.$reviewId'
+import { Route as ApiGithubFileRouteImport } from './routes/api/github/file'
+import { Route as ApiReviewIndexRouteImport } from './routes/api/review/index'
 import { Route as ApiPublicGithubCallbackRouteImport } from './routes/api/public/github/callback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -84,6 +86,16 @@ const AuthenticatedHistoryReviewIdRoute =
     path: '/$reviewId',
     getParentRoute: () => AuthenticatedHistoryRoute,
   } as any)
+const ApiGithubFileRoute = ApiGithubFileRouteImport.update({
+  id: '/api/github/file',
+  path: '/api/github/file',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiReviewIndexRoute = ApiReviewIndexRouteImport.update({
+  id: '/api/review/',
+  path: '/api/review/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicGithubCallbackRoute = ApiPublicGithubCallbackRouteImport.update({
   id: '/api/public/github/callback',
   path: '/api/public/github/callback',
@@ -102,6 +114,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/health': typeof ApiHealthRoute
   '/history/$reviewId': typeof AuthenticatedHistoryReviewIdRoute
+  '/api/github/file': typeof ApiGithubFileRoute
+  '/api/review/': typeof ApiReviewIndexRoute
   '/api/public/github/callback': typeof ApiPublicGithubCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -116,6 +130,8 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/health': typeof ApiHealthRoute
   '/history/$reviewId': typeof AuthenticatedHistoryReviewIdRoute
+  '/api/github/file': typeof ApiGithubFileRoute
+  '/api/review': typeof ApiReviewIndexRoute
   '/api/public/github/callback': typeof ApiPublicGithubCallbackRoute
 }
 export interface FileRoutesById {
@@ -132,6 +148,8 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/health': typeof ApiHealthRoute
   '/_authenticated/history/$reviewId': typeof AuthenticatedHistoryReviewIdRoute
+  '/api/github/file': typeof ApiGithubFileRoute
+  '/api/review/': typeof ApiReviewIndexRoute
   '/api/public/github/callback': typeof ApiPublicGithubCallbackRoute
 }
 export interface FileRouteTypes {
@@ -148,6 +166,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/api/health'
     | '/history/$reviewId'
+    | '/api/github/file'
+    | '/api/review/'
     | '/api/public/github/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -162,6 +182,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/api/health'
     | '/history/$reviewId'
+    | '/api/github/file'
+    | '/api/review'
     | '/api/public/github/callback'
   id:
     | '__root__'
@@ -177,6 +199,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/api/health'
     | '/_authenticated/history/$reviewId'
+    | '/api/github/file'
+    | '/api/review/'
     | '/api/public/github/callback'
   fileRoutesById: FileRoutesById
 }
@@ -186,6 +210,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  ApiGithubFileRoute: typeof ApiGithubFileRoute
+  ApiReviewIndexRoute: typeof ApiReviewIndexRoute
   ApiPublicGithubCallbackRoute: typeof ApiPublicGithubCallbackRoute
 }
 
@@ -275,6 +301,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoryReviewIdRouteImport
       parentRoute: typeof AuthenticatedHistoryRoute
     }
+    '/api/github/file': {
+      id: '/api/github/file'
+      path: '/api/github/file'
+      fullPath: '/api/github/file'
+      preLoaderRoute: typeof ApiGithubFileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/review/': {
+      id: '/api/review/'
+      path: '/api/review'
+      fullPath: '/api/review/'
+      preLoaderRoute: typeof ApiReviewIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/github/callback': {
       id: '/api/public/github/callback'
       path: '/api/public/github/callback'
@@ -323,6 +363,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiHealthRoute: ApiHealthRoute,
+  ApiGithubFileRoute: ApiGithubFileRoute,
+  ApiReviewIndexRoute: ApiReviewIndexRoute,
   ApiPublicGithubCallbackRoute: ApiPublicGithubCallbackRoute,
 }
 export const routeTree = rootRouteImport
