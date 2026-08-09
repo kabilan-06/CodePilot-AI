@@ -21,8 +21,13 @@ Respond with ONLY a JSON object of this exact shape:
   "title": "short 3-6 word title for this review",
   "summary": "2-4 sentence overall assessment",
   "scores": {
-    "performance": 0-100, "security": 0-100, "maintainability": 0-100,
-    "readability": 0-100, "architecture": 0-100, "documentation": 0-100, "testing": 0-100
+    "performance": 0-100,
+    "security": 0-100,
+    "maintainability": 0-100,
+    "readability": 0-100,
+    "architecture": 0-100,
+    "documentation": 0-100,
+    "testing": 0-100
   },
   "issues": [
     {
@@ -39,7 +44,9 @@ Respond with ONLY a JSON object of this exact shape:
     }
   ]
 }
-Return between 3 and 10 issues, most severe first. Never wrap the JSON in markdown fences.`;
+
+Return between 3 and 10 issues, most severe first.
+Never wrap the JSON in markdown fences.`;
 
 function clampScore(value: unknown): number {
   const n = typeof value === "number" ? value : Number(value);
@@ -53,9 +60,14 @@ function parseJson(raw: string): Record<string, unknown> {
     .replace(/^```(?:json)?/i, "")
     .replace(/```$/, "")
     .trim();
+
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("The AI returned an unreadable response.");
+
+  if (start === -1 || end === -1) {
+    throw new Error("The AI returned an unreadable response.");
+  }
+
   return JSON.parse(cleaned.slice(start, end + 1));
 }
 
@@ -63,8 +75,15 @@ export const runReview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((input: ReviewInput) => {
     const code = (input.code ?? "").trim();
-    if (code.length < 10) throw new Error("Please provide at least 10 characters of code.");
-    if (code.length > 40000) throw new Error("Code is too large. Keep it under 40,000 characters.");
+
+    if (code.length < 10) {
+      throw new Error("Please provide at least 10 characters of code.");
+    }
+
+    if (code.length > 40000) {
+      throw new Error("Code is too large. Keep it under 40,000 characters.");
+    }
+
     return {
       code,
       language: (input.language || "typescript").slice(0, 40),
@@ -75,65 +94,92 @@ export const runReview = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const lovableApiKey = process.env.LOVABLE_API_KEY?.trim();
-    const openAiApiKey = process.env.OPENAI_API_KEY?.trim();
-    const openAiBaseUrl = (process.env.OPENAI_BASE_URL?.trim() || "https://api.openai.com/v1")
-      .replace(/\/$/, "");
-    const openAiModel = process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini";
+
+    // Prefer Groq, fallback to OpenAI
+    const aiApiKey =
+      process.env.GROQ_API_KEY?.trim() ||
+      process.env.OPENAI_API_KEY?.trim();
+
+    const aiBaseUrl = (
+      process.env.GROQ_API_KEY
+        ? "https://api.groq.com/openai/v1"
+        : process.env.OPENAI_BASE_URL?.trim() || "https://api.openai.com/v1"
+    ).replace(/\/$/, "");
+
+    const aiModel =
+      process.env.GROQ_MODEL?.trim() ||
+      process.env.OPENAI_MODEL?.trim() ||
+      "llama-3.3-70b-versatile";
 
     let response: Response;
 
     if (lovableApiKey) {
-      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      response = await fetch(
+        "https://ai.gateway.lovable.dev/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${lovableApiKey}`,
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3.6-flash",
+            response_format: { type: "json_object" },
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              {
+                role: "user",
+                content: `Language: ${data.language}
+Source: ${data.source}${data.sourceRef ? ` (${data.sourceRef})` : ""}
+
+Code:
+\`\`\`
+${data.code}
+\`\`\``,
+              },
+            ],
+          }),
+        },
+      );
+    } else if (aiApiKey) {
+      response = await fetch(`${aiBaseUrl}/chat/completions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${lovableApiKey}`,
+          Authorization: `Bearer ${aiApiKey}`,
         },
         body: JSON.stringify({
-          model: "google/gemini-3.6-flash",
+          model: aiModel,
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
             {
               role: "user",
-              content: `Language: ${data.language}\nSource: ${data.source}${
-                data.sourceRef ? ` (${data.sourceRef})` : ""
-              }\n\nCode:\n\`\`\`\n${data.code}\n\`\`\``,
-            },
-          ],
-        }),
-      });
-    } else if (openAiApiKey) {
-      response = await fetch(`${openAiBaseUrl}/chat/completions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openAiApiKey}`,
-        },
-        body: JSON.stringify({
-          model: openAiModel,
-          response_format: { type: "json_object" },
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            {
-              role: "user",
-              content: `Language: ${data.language}\nSource: ${data.source}${
-                data.sourceRef ? ` (${data.sourceRef})` : ""
-              }\n\nCode:\n\`\`\`\n${data.code}\n\`\`\``,
+              content: `Language: ${data.language}
+Source: ${data.source}${data.sourceRef ? ` (${data.sourceRef})` : ""}
+
+Code:
+\`\`\`
+${data.code}
+\`\`\``,
             },
           ],
         }),
       });
     } else {
       throw new Error(
-        "AI is not configured for this project. Set LOVABLE_API_KEY or OPENAI_API_KEY.",
+        "AI is not configured. Set LOVABLE_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY.",
       );
     }
 
-    if (response.status === 429)
+    if (response.status === 429) {
       throw new Error("Rate limit reached. Please try again in a moment.");
-    if (response.status === 402)
+    }
+
+    if (response.status === 402) {
       throw new Error("AI credits exhausted. Add credits to continue reviewing.");
+    }
+
     if (!response.ok) {
       const body = await response.text();
       console.error(`AI gateway error [${response.status}]: ${body}`);
@@ -143,32 +189,39 @@ export const runReview = createServerFn({ method: "POST" })
     const payload = (await response.json()) as {
       choices?: { message?: { content?: string } }[];
     };
+
     const content = payload.choices?.[0]?.message?.content ?? "";
     const parsed = parseJson(content);
 
     const rawScores = (parsed.scores ?? {}) as Record<string, unknown>;
+
     const scores = SCORE_KEYS.reduce((acc, key) => {
       acc[key] = clampScore(rawScores[key]);
       return acc;
     }, {} as Scores);
 
     const overall = Math.round(
-      SCORE_KEYS.reduce((sum, key) => sum + scores[key], 0) / SCORE_KEYS.length,
+      SCORE_KEYS.reduce((sum, key) => sum + scores[key], 0) /
+        SCORE_KEYS.length,
     );
 
     const issues: ReviewIssue[] = Array.isArray(parsed.issues)
-      ? (parsed.issues as Record<string, unknown>[]).slice(0, 12).map((issue) => ({
-          title: String(issue.title ?? "Issue"),
-          category: String(issue.category ?? "best-practice"),
-          severity: String(issue.severity ?? "medium"),
-          line: typeof issue.line === "number" ? issue.line : null,
-          explanation: String(issue.explanation ?? ""),
-          why_it_matters: String(issue.why_it_matters ?? ""),
-          how_to_fix: String(issue.how_to_fix ?? ""),
-          improved_code: String(issue.improved_code ?? ""),
-          alternative: String(issue.alternative ?? ""),
-          estimated_improvement: String(issue.estimated_improvement ?? ""),
-        }))
+      ? (parsed.issues as Record<string, unknown>[])
+          .slice(0, 12)
+          .map((issue) => ({
+            title: String(issue.title ?? "Issue"),
+            category: String(issue.category ?? "best-practice"),
+            severity: String(issue.severity ?? "medium"),
+            line: typeof issue.line === "number" ? issue.line : null,
+            explanation: String(issue.explanation ?? ""),
+            why_it_matters: String(issue.why_it_matters ?? ""),
+            how_to_fix: String(issue.how_to_fix ?? ""),
+            improved_code: String(issue.improved_code ?? ""),
+            alternative: String(issue.alternative ?? ""),
+            estimated_improvement: String(
+              issue.estimated_improvement ?? "",
+            ),
+          }))
       : [];
 
     const result: ReviewResult = {
@@ -203,5 +256,9 @@ export const runReview = createServerFn({ method: "POST" })
       throw new Error("Review generated but could not be saved.");
     }
 
-    return { ...result, id: saved.id, created_at: saved.created_at };
+    return {
+      ...result,
+      id: saved.id,
+      created_at: saved.created_at,
+    };
   });
