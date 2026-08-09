@@ -17,12 +17,13 @@ Copy `.env.example` locally and set the following values in the selected host:
 - `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`
 - `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_PROJECT_ID`
 - `SUPABASE_SERVICE_ROLE_KEY` (server-only; required by GitHub connections)
-- `LOVABLE_API_KEY` (server-only; required by code review)
+- `LOVABLE_API_KEY` or `OPENAI_API_KEY` (server-only; required by code review)
+- `OPENAI_BASE_URL`, `OPENAI_MODEL` if you are using an OpenAI-compatible API host
 - `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET`, `GITHUB_TOKEN_ENC_KEY`
 
-Never expose `SUPABASE_SERVICE_ROLE_KEY`, `LOVABLE_API_KEY`, GitHub secrets, or
-the encryption key as `VITE_*` variables. Keep `GITHUB_TOKEN_ENC_KEY` stable:
-changing it makes already stored GitHub tokens unreadable.
+Never expose `SUPABASE_SERVICE_ROLE_KEY`, `LOVABLE_API_KEY`, `OPENAI_API_KEY`, GitHub
+secrets, or the encryption key as `VITE_*` variables. Keep `GITHUB_TOKEN_ENC_KEY`
+stable: changing it makes already stored GitHub tokens unreadable.
 
 ## Render
 

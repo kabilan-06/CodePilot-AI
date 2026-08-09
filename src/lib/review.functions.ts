@@ -74,29 +74,61 @@ export const runReview = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data, context }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("AI is not configured for this project.");
+    const lovableApiKey = process.env.LOVABLE_API_KEY?.trim();
+    const openAiApiKey = process.env.OPENAI_API_KEY?.trim();
+    const openAiBaseUrl = (process.env.OPENAI_BASE_URL?.trim() || "https://api.openai.com/v1")
+      .replace(/\/$/, "");
+    const openAiModel = process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini";
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3.6-flash",
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          {
-            role: "user",
-            content: `Language: ${data.language}\nSource: ${data.source}${
-              data.sourceRef ? ` (${data.sourceRef})` : ""
-            }\n\nCode:\n\`\`\`\n${data.code}\n\`\`\``,
-          },
-        ],
-      }),
-    });
+    let response: Response;
+
+    if (lovableApiKey) {
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${lovableApiKey}`,
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3.6-flash",
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            {
+              role: "user",
+              content: `Language: ${data.language}\nSource: ${data.source}${
+                data.sourceRef ? ` (${data.sourceRef})` : ""
+              }\n\nCode:\n\`\`\`\n${data.code}\n\`\`\``,
+            },
+          ],
+        }),
+      });
+    } else if (openAiApiKey) {
+      response = await fetch(`${openAiBaseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${openAiApiKey}`,
+        },
+        body: JSON.stringify({
+          model: openAiModel,
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            {
+              role: "user",
+              content: `Language: ${data.language}\nSource: ${data.source}${
+                data.sourceRef ? ` (${data.sourceRef})` : ""
+              }\n\nCode:\n\`\`\`\n${data.code}\n\`\`\``,
+            },
+          ],
+        }),
+      });
+    } else {
+      throw new Error(
+        "AI is not configured for this project. Set LOVABLE_API_KEY or OPENAI_API_KEY.",
+      );
+    }
 
     if (response.status === 429)
       throw new Error("Rate limit reached. Please try again in a moment.");
