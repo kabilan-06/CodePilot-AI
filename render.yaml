@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: codepilot-ai
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build:render
+    startCommand: node .output/server/index.mjs
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NITRO_PRESET
+        value: node-server
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_PROJECT_ID
+        sync: false
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_SUPABASE_PROJECT_ID
+        sync: false
+      - key: LOVABLE_API_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GITHUB_OAUTH_CLIENT_ID
+        sync: false
+      - key: GITHUB_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_TOKEN_ENC_KEY
+        generateValue: true
