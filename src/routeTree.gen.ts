@@ -15,10 +15,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedHealingRouteImport } from './routes/_authenticated/healing'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
+import { Route as AuthenticatedRadarRouteImport } from './routes/_authenticated/radar'
 import { Route as AuthenticatedRepositoriesRouteImport } from './routes/_authenticated/repositories'
 import { Route as AuthenticatedReviewRouteImport } from './routes/_authenticated/review'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSwarmRouteImport } from './routes/_authenticated/swarm'
+import { Route as AuthenticatedTwinRouteImport } from './routes/_authenticated/twin'
+import { Route as AuthenticatedVisualQaRouteImport } from './routes/_authenticated/visual-qa'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AuthenticatedHistoryReviewIdRouteImport } from './routes/_authenticated/history.$reviewId'
 import { Route as ApiGithubFileRouteImport } from './routes/api/github/file'
@@ -54,9 +59,19 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHealingRoute = AuthenticatedHealingRouteImport.update({
+  id: '/healing',
+  path: '/healing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   id: '/history',
   path: '/history',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRadarRoute = AuthenticatedRadarRouteImport.update({
+  id: '/radar',
+  path: '/radar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedRepositoriesRoute =
@@ -73,6 +88,21 @@ const AuthenticatedReviewRoute = AuthenticatedReviewRouteImport.update({
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSwarmRoute = AuthenticatedSwarmRouteImport.update({
+  id: '/swarm',
+  path: '/swarm',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTwinRoute = AuthenticatedTwinRouteImport.update({
+  id: '/twin',
+  path: '/twin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedVisualQaRoute = AuthenticatedVisualQaRouteImport.update({
+  id: '/visual-qa',
+  path: '/visual-qa',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -108,10 +138,15 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/healing': typeof AuthenticatedHealingRoute
   '/history': typeof AuthenticatedHistoryRouteWithChildren
+  '/radar': typeof AuthenticatedRadarRoute
   '/repositories': typeof AuthenticatedRepositoriesRoute
   '/review': typeof AuthenticatedReviewRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/swarm': typeof AuthenticatedSwarmRoute
+  '/twin': typeof AuthenticatedTwinRoute
+  '/visual-qa': typeof AuthenticatedVisualQaRoute
   '/api/health': typeof ApiHealthRoute
   '/history/$reviewId': typeof AuthenticatedHistoryReviewIdRoute
   '/api/github/file': typeof ApiGithubFileRoute
@@ -124,10 +159,15 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/healing': typeof AuthenticatedHealingRoute
   '/history': typeof AuthenticatedHistoryRouteWithChildren
+  '/radar': typeof AuthenticatedRadarRoute
   '/repositories': typeof AuthenticatedRepositoriesRoute
   '/review': typeof AuthenticatedReviewRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/swarm': typeof AuthenticatedSwarmRoute
+  '/twin': typeof AuthenticatedTwinRoute
+  '/visual-qa': typeof AuthenticatedVisualQaRoute
   '/api/health': typeof ApiHealthRoute
   '/history/$reviewId': typeof AuthenticatedHistoryReviewIdRoute
   '/api/github/file': typeof ApiGithubFileRoute
@@ -142,10 +182,15 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/healing': typeof AuthenticatedHealingRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRouteWithChildren
+  '/_authenticated/radar': typeof AuthenticatedRadarRoute
   '/_authenticated/repositories': typeof AuthenticatedRepositoriesRoute
   '/_authenticated/review': typeof AuthenticatedReviewRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/swarm': typeof AuthenticatedSwarmRoute
+  '/_authenticated/twin': typeof AuthenticatedTwinRoute
+  '/_authenticated/visual-qa': typeof AuthenticatedVisualQaRoute
   '/api/health': typeof ApiHealthRoute
   '/_authenticated/history/$reviewId': typeof AuthenticatedHistoryReviewIdRoute
   '/api/github/file': typeof ApiGithubFileRoute
@@ -160,10 +205,15 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/analytics'
     | '/dashboard'
+    | '/healing'
     | '/history'
+    | '/radar'
     | '/repositories'
     | '/review'
     | '/settings'
+    | '/swarm'
+    | '/twin'
+    | '/visual-qa'
     | '/api/health'
     | '/history/$reviewId'
     | '/api/github/file'
@@ -176,10 +226,15 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/analytics'
     | '/dashboard'
+    | '/healing'
     | '/history'
+    | '/radar'
     | '/repositories'
     | '/review'
     | '/settings'
+    | '/swarm'
+    | '/twin'
+    | '/visual-qa'
     | '/api/health'
     | '/history/$reviewId'
     | '/api/github/file'
@@ -193,10 +248,15 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/analytics'
     | '/_authenticated/dashboard'
+    | '/_authenticated/healing'
     | '/_authenticated/history'
+    | '/_authenticated/radar'
     | '/_authenticated/repositories'
     | '/_authenticated/review'
     | '/_authenticated/settings'
+    | '/_authenticated/swarm'
+    | '/_authenticated/twin'
+    | '/_authenticated/visual-qa'
     | '/api/health'
     | '/_authenticated/history/$reviewId'
     | '/api/github/file'
@@ -259,11 +319,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/healing': {
+      id: '/_authenticated/healing'
+      path: '/healing'
+      fullPath: '/healing'
+      preLoaderRoute: typeof AuthenticatedHealingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/history': {
       id: '/_authenticated/history'
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof AuthenticatedHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/radar': {
+      id: '/_authenticated/radar'
+      path: '/radar'
+      fullPath: '/radar'
+      preLoaderRoute: typeof AuthenticatedRadarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/repositories': {
@@ -285,6 +359,27 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/swarm': {
+      id: '/_authenticated/swarm'
+      path: '/swarm'
+      fullPath: '/swarm'
+      preLoaderRoute: typeof AuthenticatedSwarmRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/twin': {
+      id: '/_authenticated/twin'
+      path: '/twin'
+      fullPath: '/twin'
+      preLoaderRoute: typeof AuthenticatedTwinRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/visual-qa': {
+      id: '/_authenticated/visual-qa'
+      path: '/visual-qa'
+      fullPath: '/visual-qa'
+      preLoaderRoute: typeof AuthenticatedVisualQaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/health': {
@@ -339,19 +434,29 @@ const AuthenticatedHistoryRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedHealingRoute: typeof AuthenticatedHealingRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRouteWithChildren
+  AuthenticatedRadarRoute: typeof AuthenticatedRadarRoute
   AuthenticatedRepositoriesRoute: typeof AuthenticatedRepositoriesRoute
   AuthenticatedReviewRoute: typeof AuthenticatedReviewRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSwarmRoute: typeof AuthenticatedSwarmRoute
+  AuthenticatedTwinRoute: typeof AuthenticatedTwinRoute
+  AuthenticatedVisualQaRoute: typeof AuthenticatedVisualQaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedHealingRoute: AuthenticatedHealingRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRouteWithChildren,
+  AuthenticatedRadarRoute: AuthenticatedRadarRoute,
   AuthenticatedRepositoriesRoute: AuthenticatedRepositoriesRoute,
   AuthenticatedReviewRoute: AuthenticatedReviewRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSwarmRoute: AuthenticatedSwarmRoute,
+  AuthenticatedTwinRoute: AuthenticatedTwinRoute,
+  AuthenticatedVisualQaRoute: AuthenticatedVisualQaRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -119,6 +119,261 @@ export type Database = {
         };
         Relationships: [];
       };
+      approvals: {
+        Row: {
+          asked_at: string;
+          consumed_at: string | null;
+          decided_at: string | null;
+          decision_note: string | null;
+          digest: string;
+          expires_at: string;
+          id: string;
+          kind: string;
+          payload: Json;
+          risk: string;
+          status: string;
+          title: string;
+          user_id: string;
+        };
+        Insert: {
+          asked_at?: string;
+          consumed_at?: string | null;
+          decided_at?: string | null;
+          decision_note?: string | null;
+          digest: string;
+          expires_at?: string;
+          id?: string;
+          kind: string;
+          payload?: Json;
+          risk?: string;
+          status?: string;
+          title: string;
+          user_id: string;
+        };
+        Update: {
+          asked_at?: string;
+          consumed_at?: string | null;
+          decided_at?: string | null;
+          decision_note?: string | null;
+          digest?: string;
+          expires_at?: string;
+          id?: string;
+          kind?: string;
+          payload?: Json;
+          risk?: string;
+          status?: string;
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      heal_runs: {
+        Row: {
+          created_at: string;
+          diagnosis: Json;
+          error: Json | null;
+          error_text: string;
+          id: string;
+          owner: string | null;
+          patch: Json;
+          ref: string | null;
+          repo: string | null;
+          sandbox: Json;
+          status: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          diagnosis?: Json;
+          error?: Json | null;
+          error_text: string;
+          id?: string;
+          owner?: string | null;
+          patch?: Json;
+          ref?: string | null;
+          repo?: string | null;
+          sandbox?: Json;
+          status?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          diagnosis?: Json;
+          error?: Json | null;
+          error_text?: string;
+          id?: string;
+          owner?: string | null;
+          patch?: Json;
+          ref?: string | null;
+          repo?: string | null;
+          sandbox?: Json;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      radar_reports: {
+        Row: {
+          created_at: string;
+          id: string;
+          input_summary: string;
+          mode: string;
+          overall_risk: number;
+          owner: string;
+          ref: string;
+          repo: string;
+          user_id: string;
+          verdict: Json;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          input_summary?: string;
+          mode?: string;
+          overall_risk?: number;
+          owner: string;
+          ref: string;
+          repo: string;
+          user_id: string;
+          verdict?: Json;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          input_summary?: string;
+          mode?: string;
+          overall_risk?: number;
+          owner?: string;
+          ref?: string;
+          repo?: string;
+          user_id?: string;
+          verdict?: Json;
+        };
+        Relationships: [];
+      };
+      swarm_runs: {
+        Row: {
+          artifacts: Json;
+          created_at: string;
+          error: string | null;
+          id: string;
+          model: string;
+          owner: string;
+          ref: string;
+          repo: string;
+          status: string;
+          task: string;
+          transcript: Json;
+          updated_at: string;
+          user_id: string;
+          verdict: Json | null;
+        };
+        Insert: {
+          artifacts?: Json;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          model?: string;
+          owner: string;
+          ref?: string;
+          repo: string;
+          status?: string;
+          task: string;
+          transcript?: Json;
+          updated_at?: string;
+          user_id: string;
+          verdict?: Json | null;
+        };
+        Update: {
+          artifacts?: Json;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          model?: string;
+          owner?: string;
+          ref?: string;
+          repo?: string;
+          status?: string;
+          task?: string;
+          transcript?: Json;
+          updated_at?: string;
+          user_id?: string;
+          verdict?: Json | null;
+        };
+        Relationships: [];
+      };
+      twin_snapshots: {
+        Row: {
+          created_at: string;
+          file_count: number;
+          graph: Json;
+          id: string;
+          owner: string;
+          ref: string;
+          repo: string;
+          stats: Json;
+          tree_sha: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          file_count?: number;
+          graph?: Json;
+          id?: string;
+          owner: string;
+          ref: string;
+          repo: string;
+          stats?: Json;
+          tree_sha: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          file_count?: number;
+          graph?: Json;
+          id?: string;
+          owner?: string;
+          ref?: string;
+          repo?: string;
+          stats?: Json;
+          tree_sha?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      visual_qa_runs: {
+        Row: {
+          address: string | null;
+          created_at: string;
+          id: string;
+          mode: string;
+          overall: Json;
+          target_url: string;
+          user_id: string;
+        };
+        Insert: {
+          address?: string | null;
+          created_at?: string;
+          id?: string;
+          mode?: string;
+          overall?: Json;
+          target_url?: string;
+          user_id: string;
+        };
+        Update: {
+          address?: string | null;
+          created_at?: string;
+          id?: string;
+          mode?: string;
+          overall?: Json;
+          target_url?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;

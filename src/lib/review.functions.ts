@@ -96,9 +96,7 @@ export const runReview = createServerFn({ method: "POST" })
     const lovableApiKey = process.env.LOVABLE_API_KEY?.trim();
 
     // Prefer Groq, fallback to OpenAI
-    const aiApiKey =
-      process.env.GROQ_API_KEY?.trim() ||
-      process.env.OPENAI_API_KEY?.trim();
+    const aiApiKey = process.env.GROQ_API_KEY?.trim() || process.env.OPENAI_API_KEY?.trim();
 
     const aiBaseUrl = (
       process.env.GROQ_API_KEY
@@ -114,33 +112,30 @@ export const runReview = createServerFn({ method: "POST" })
     let response: Response;
 
     if (lovableApiKey) {
-      response = await fetch(
-        "https://ai.gateway.lovable.dev/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${lovableApiKey}`,
-          },
-          body: JSON.stringify({
-            model: "google/gemini-3.6-flash",
-            response_format: { type: "json_object" },
-            messages: [
-              { role: "system", content: SYSTEM_PROMPT },
-              {
-                role: "user",
-                content: `Language: ${data.language}
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${lovableApiKey}`,
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3.6-flash",
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            {
+              role: "user",
+              content: `Language: ${data.language}
 Source: ${data.source}${data.sourceRef ? ` (${data.sourceRef})` : ""}
 
 Code:
 \`\`\`
 ${data.code}
 \`\`\``,
-              },
-            ],
-          }),
-        },
-      );
+            },
+          ],
+        }),
+      });
     } else if (aiApiKey) {
       response = await fetch(`${aiBaseUrl}/chat/completions`, {
         method: "POST",
@@ -201,27 +196,22 @@ ${data.code}
     }, {} as Scores);
 
     const overall = Math.round(
-      SCORE_KEYS.reduce((sum, key) => sum + scores[key], 0) /
-        SCORE_KEYS.length,
+      SCORE_KEYS.reduce((sum, key) => sum + scores[key], 0) / SCORE_KEYS.length,
     );
 
     const issues: ReviewIssue[] = Array.isArray(parsed.issues)
-      ? (parsed.issues as Record<string, unknown>[])
-          .slice(0, 12)
-          .map((issue) => ({
-            title: String(issue.title ?? "Issue"),
-            category: String(issue.category ?? "best-practice"),
-            severity: String(issue.severity ?? "medium"),
-            line: typeof issue.line === "number" ? issue.line : null,
-            explanation: String(issue.explanation ?? ""),
-            why_it_matters: String(issue.why_it_matters ?? ""),
-            how_to_fix: String(issue.how_to_fix ?? ""),
-            improved_code: String(issue.improved_code ?? ""),
-            alternative: String(issue.alternative ?? ""),
-            estimated_improvement: String(
-              issue.estimated_improvement ?? "",
-            ),
-          }))
+      ? (parsed.issues as Record<string, unknown>[]).slice(0, 12).map((issue) => ({
+          title: String(issue.title ?? "Issue"),
+          category: String(issue.category ?? "best-practice"),
+          severity: String(issue.severity ?? "medium"),
+          line: typeof issue.line === "number" ? issue.line : null,
+          explanation: String(issue.explanation ?? ""),
+          why_it_matters: String(issue.why_it_matters ?? ""),
+          how_to_fix: String(issue.how_to_fix ?? ""),
+          improved_code: String(issue.improved_code ?? ""),
+          alternative: String(issue.alternative ?? ""),
+          estimated_improvement: String(issue.estimated_improvement ?? ""),
+        }))
       : [];
 
     const result: ReviewResult = {
